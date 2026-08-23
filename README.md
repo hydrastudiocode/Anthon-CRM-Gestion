@@ -1,5 +1,5 @@
 # Anthon-Code-CRM - Gestion de Clientes
-![Portada Z8N](Capturas/captura1.jpg)
+![Portada Z8N](Capturas/Captura1.jpg)
 
 ![Version](https://img.shields.io/badge/version-1.0.1-blue)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
@@ -8,7 +8,7 @@
 
 **Sistema de Gestion Personal** con gestion de clientes, organizacion, notas y sistema de autenticación.
 
-![Portada Z8N](Capturas/captura2.jpg)
+![Portada Z8N](Capturas/Captura2.jpg)
 
 ## 🚀 Caracteristicas
 
