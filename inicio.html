@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthon-CRM</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <!-- Font Awesome 6  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/inicio.css">
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="apple-touch-icon" href="img/logo.png">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src="img/logo.png" alt="">
+                <h2>Anthon<span>CRM</span></h2>
+            </div>
+            
+<nav class="nav-menu">
+    <!-- Opciones principales del CRM -->
+    <div class="nav-main">
+        <a href="#" class="nav-item active" data-page="dashboard">
+            <i class="fas fa-home"></i>
+            <span>Panel</span>
+        </a>
+        <a href="#" class="nav-item" data-page="clientes">
+            <i class="fas fa-users"></i>
+            <span>Clientes</span>
+            <span class="badge" id="clientesBadge">0</span>
+        </a>
+        <a href="#" class="nav-item" data-page="notas-generales">
+            <i class="fas fa-sticky-note"></i>
+            <span>Notas Generales</span>
+            <span class="badge" id="notasBadge">0</span>
+        </a>
+        <a href="#" class="nav-item" data-page="tareas-generales">
+            <i class="fas fa-tasks"></i>
+            <span>Tareas Generales</span>
+            <span class="badge" id="tareasBadge">0</span>
+        </a>
+    </div>
+    
+    <!-- Línea separadora -->
+    <div class="nav-divider"></div>
+    
+    <!-- Enlaces externos (NO son parte de la navegación del CRM) -->
+    <div class="nav-section-title">ENLACES ÚTILES</div>
+    
+    <div class="external-links">
+        <a href="###" class="external-link-item" target="_blank">
+            <i class="fas fa-code"></i>
+            <span>Anthon Code</span>
+            <i class="fas fa-external-link-alt external-icon"></i>
+        </a>
+        <a href="###" class="external-link-item" target="_blank">
+            <i class="fab fa-facebook"></i>
+            <span>Facebook</span>
+            <i class="fas fa-external-link-alt external-icon"></i>
+        </a>
+        <a href="###" class="external-link-item" target="_blank">
+            <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
+            <i class="fas fa-external-link-alt external-icon"></i>
+        </a>
+        <a href="###" class="external-link-item" target="_blank">
+            <i class="fa-solid fa-globe"></i>
+            <span>Web Principal</span>
+            <i class="fas fa-external-link-alt external-icon"></i>
+        </a>
+    </div>
+</nav>
+
+<div class="sidebar-footer">
+    <div class="user-info" id="userInfo">
+        <i class="fas fa-user-circle"></i>
+        <span>Cargando...</span>
+    </div>
+    <button class="theme-btn" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    <button class="theme-btn" id="logoutBtn" title="Cerrar sesión">
+        <i class="fas fa-sign-out-alt"></i>
+    </button>
+</div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar clientes, notas o tareas...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary" id="addBtn">
+                        <i class="fas fa-plus"></i>
+                        Agregar
+                    </button>
+                </div>
+            </header>
+
+            <!-- Pages Container -->
+            <div class="pages-container" id="pagesContainer">
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboard-page">
+                    <h1 class="page-title">Panel Admin</h1>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <h3 id="totalClientes">0</h3>
+                                <p>Total Clientes</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-sticky-note"></i>
+                            <div>
+                                <h3 id="totalNotas">0</h3>
+                                <p>Notas</p>
+                                <small id="notasDesglose">(0 de clientes)</small>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-tasks"></i>
+                            <div>
+                                <h3 id="totalTareas">0</h3>
+                                <p>Tareas</p>
+                                <small id="tareasDesglose">(0 de clientes)</small>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <h3 id="tareasCompletadas">0</h3>
+                                <p>Completadas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>Últimos Clientes</h3>
+                            <div id="ultimosClientes" class="compact-list"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Próximas Tareas</h3>
+                            <div id="proximasTareas" class="compact-list"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Notas Recientes</h3>
+                            <div id="notasRecientes" class="compact-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clientes Page -->
+                <div class="page" id="clientes-page">
+                    <h1 class="page-title">Clientes</h1>
+                    
+                    <div class="content-card">
+                        <div class="filters">
+                            <select id="rubroFilter">
+                                <option value="">Todos los rubros</option>
+                            </select>
+                            <select id="estadoFilter">
+                                <option value="">Todos los estados</option>
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                                <option value="potencial">Potencial</option>
+                                <option value="perdido">Perdido</option>
+                            </select>
+                            <select id="pagoFilter">
+                                <option value="">Todos los pagos</option>
+                                <option value="pagado">Pagado</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="parcial">Parcial</option>
+                            </select>
+                        </div>
+                        
+                        <div id="clientesList" class="grid-list"></div>
+                    </div>
+                </div>
+
+                <!-- Notas Generales Page -->
+                <div class="page" id="notas-generales-page">
+                    <h1 class="page-title">Notas Generales</h1>
+                    
+                    <div class="content-card">
+                        <div class="filters">
+                            <select id="categoriaFilter">
+                                <option value="">Todas las categorías</option>
+                                <option value="personal">Personal</option>
+                                <option value="trabajo">Trabajo</option>
+                                <option value="idea">Idea</option>
+                                <option value="recordatorio">Recordatorio</option>
+                                <option value="importante">Importante</option>
+                            </select>
+                        </div>
+                        
+                        <div id="notasGeneralesList" class="grid-list"></div>
+                    </div>
+                </div>
+                <!-- Overlay para móvil (agrégalo después del sidebar) -->
+
+
+                <!-- Tareas Generales Page -->
+                <div class="page" id="tareas-generales-page">
+                    <h1 class="page-title">Tareas Generales</h1>
+                    
+                    <div class="content-card">
+                        <div class="filters">
+                            <select id="prioridadFilter">
+                                <option value="">Todas las prioridades</option>
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                            <select id="estadoTareaFilter">
+                                <option value="">Todos los estados</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en-progreso">En progreso</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                        </div>
+                        
+                        <div id="tareasGeneralesList" class="tasks-container"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para clientes -->
+    <div class="modal" id="clienteModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="clienteModalTitle">Nuevo Cliente</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="clienteForm">
+                    <div class="form-tabs">
+                        <button type="button" class="tab-btn active" data-tab="info">Información</button>
+                        <button type="button" class="tab-btn" data-tab="contacto">Contacto</button>
+                        <button type="button" class="tab-btn" data-tab="proyecto">Proyecto</button>
+                        <button type="button" class="tab-btn" data-tab="notas">Notas</button>
+                        <button type="button" class="tab-btn" data-tab="tareas">Tareas</button>
+                    </div>
+
+                    <!-- Información básica -->
+                    <div class="tab-pane active" id="info-tab">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre *</label>
+                                <input type="text" id="clienteNombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Rubro</label>
+                                <input type="text" id="clienteRubro" placeholder="Ej: Tecnología, Salud, etc">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="clienteEstado">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                    <option value="potencial">Potencial</option>
+                                    <option value="perdido">Perdido</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Etiquetas</label>
+                                <input type="text" id="clienteEtiquetas" placeholder="VIP, recurrente, etc">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="tab-pane" id="contacto-tab">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="clienteEmail" placeholder="cliente@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono Principal</label>
+                                <input type="tel" id="clienteTelefono1" placeholder="+54 9 11 1234-5678">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Teléfono Secundario</label>
+                                <input type="tel" id="clienteTelefono2" placeholder="Opcional">
+                            </div>
+                            <div class="form-group">
+                                <label>WhatsApp</label>
+                                <input type="tel" id="clienteWhatsapp" placeholder="Mismo formato">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Dirección</label>
+                                <input type="text" id="clienteDireccion" placeholder="Calle, número, ciudad">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Redes Sociales</label>
+                                <input type="url" id="clienteInstagram" placeholder="Instagram">
+                            </div>
+                            <div class="form-group">
+                                <input type="url" id="clienteFacebook" placeholder="Facebook" style="margin-top: 5px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto -->
+                    <div class="tab-pane" id="proyecto-tab">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo de Proyecto</label>
+                                <input type="text" id="clienteProyecto" placeholder="Ej: Desarrollo Web, Consultoría">
+                            </div>
+                            <div class="form-group">
+                                <label>Costo</label>
+                                <input type="number" id="clienteCosto" placeholder="0.00">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Estado de Pago</label>
+                                <select id="clientePago">
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="parcial">Parcial</option>
+                                    <option value="pagado">Pagado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Método de Pago</label>
+                                <select id="clienteMetodoPago">
+                                    <option value="">Seleccionar</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="transferencia">Transferencia</option>
+                                    <option value="tarjeta">Tarjeta</option>
+                                    <option value="cripto">Criptomonedas</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Link del Proyecto</label>
+                                <input type="url" id="clienteLink" placeholder="https://...">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Entrega</label>
+                                <input type="date" id="clienteFechaEntrega">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Observaciones del Proyecto</label>
+                            <textarea id="clienteObservaciones" rows="3" placeholder="Detalles importantes del proyecto..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Notas del Cliente -->
+                    <div class="tab-pane" id="notas-tab">
+                        <div class="notas-cliente-container">
+                            <div class="notas-list" id="notasClienteList"></div>
+                            <div class="notas-input">
+                                <textarea id="nuevaNotaCliente" placeholder="Escribe una nota para este cliente..."></textarea>
+                                <button type="button" class="btn-primary" id="agregarNotaCliente">
+                                    <i class="fas fa-plus"></i> Agregar Nota
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tareas del Cliente -->
+                    <div class="tab-pane" id="tareas-tab">
+                        <div class="tareas-cliente-container">
+                            <div class="tareas-list" id="tareasClienteList"></div>
+                            <div class="tareas-input">
+                                <div class="form-row">
+                                    <div class="form-group" style="flex: 2;">
+                                        <input type="text" id="nuevaTareaCliente" placeholder="Nueva tarea...">
+                                    </div>
+                                    <div class="form-group" style="flex: 1;">
+                                        <select id="nuevaTareaPrioridad">
+                                            <option value="media">Prioridad Media</option>
+                                            <option value="alta">Prioridad Alta</option>
+                                            <option value="baja">Prioridad Baja</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="flex: 1;">
+                                        <input type="date" id="nuevaTareaFecha">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-primary" id="agregarTareaCliente">
+                                    <i class="fas fa-plus"></i> Agregar Tarea
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelClienteBtn">Cancelar</button>
+                <button class="btn-primary" id="saveClienteBtn">Guardar Cliente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para notas generales -->
+    <div class="modal" id="notaGeneralModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="notaGeneralModalTitle">Nueva Nota General</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="notaGeneralForm">
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" id="notaGeneralTitulo" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="notaGeneralCategoria">
+                                <option value="personal">Personal</option>
+                                <option value="trabajo">Trabajo</option>
+                                <option value="idea">Idea</option>
+                                <option value="recordatorio">Recordatorio</option>
+                                <option value="importante">Importante</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <input type="color" id="notaGeneralColor" value="#3498db">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Contenido</label>
+                        <textarea id="notaGeneralContenido" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Etiquetas</label>
+                        <input type="text" id="notaGeneralEtiquetas" placeholder="separadas por comas">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelNotaGeneralBtn">Cancelar</button>
+                <button class="btn-primary" id="saveNotaGeneralBtn">Guardar Nota</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para tareas generales -->
+    <div class="modal" id="tareaGeneralModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tareaGeneralModalTitle">Nueva Tarea General</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="tareaGeneralForm">
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" id="tareaGeneralTitulo" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Prioridad</label>
+                            <select id="tareaGeneralPrioridad">
+                                <option value="alta">Alta</option>
+                                <option value="media" selected>Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select id="tareaGeneralEstado">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en-progreso">En progreso</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha Límite</label>
+                            <input type="date" id="tareaGeneralFechaLimite">
+                        </div>
+                        <div class="form-group">
+                            <label>Hora</label>
+                            <input type="time" id="tareaGeneralHora">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="tareaGeneralDescripcion" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Etiquetas</label>
+                        <input type="text" id="tareaGeneralEtiquetas" placeholder="separadas por comas">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelTareaGeneralBtn">Cancelar</button>
+                <button class="btn-primary" id="saveTareaGeneralBtn">Guardar Tarea</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles del cliente -->
+    <div class="modal" id="detalleClienteModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Detalles del Cliente</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="detalleClienteBody">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast de notificaciones -->
+    <div id="toast" class="toast"></div>
+     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="js/Configuraciones/firebase-config.js"></script>
+    <script src="js/app/app.js"></script>
+</body>
+</html>
